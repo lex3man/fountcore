@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:managment
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - fountcore_net
+  core_orm:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8001
+    volumes:
+      - .:/app
+    ports:
+      - 8001:8001
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - fountcore_net
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=lex3man
+      - POSTGRES_PASSWORD=Django_admin192168
+      - POSTGRES_DB=fountcore_main
+    networks:
+      - fountcore_net
+
+volumes:
+  postgres_data:
+
+networks:
+  fountcore_net:
+    driver: bridge
