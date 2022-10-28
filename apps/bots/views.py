@@ -1,4 +1,6 @@
 import json
+
+from apps.users.models import TelegramAsset
 from .models import Bot, Button, Keyboard, ContentBlock, State, Log, Command
 from django.http import JsonResponse
 from django.views import View
@@ -56,9 +58,19 @@ class GetCommands(View):
             })
         return JsonResponse(data)
 
-class GetAnswer(View):
+class FindAnswer(View):
     def get(self, request):
         bid = request.GET.get('bid')
-        actionData = request.GET.get('data')
-        bot = Bot.objects.get(bot_id = bid)
-        return JsonResponse(bot.FeelAction(actionData))
+        tuid = request.GET.get('tid')
+        text = request.GET.get('text')
+        tuser = TelegramAsset.objects.get(tid = tuid)
+        userCurrentState = State.objects.get(sid = tuser.state_id)
+        requestBot = Bot.objects.get(bot_id = bid)
+        contentBlock = ContentBlock.objects.filter(bot = requestBot).filter(state = userCurrentState).get(content = text)
+        return JsonResponse({
+            'status':'OK',
+            'content':{
+                'caption':contentBlock.caption,
+                'text':contentBlock.content,
+            }
+        })

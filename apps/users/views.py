@@ -1,4 +1,3 @@
-from string import digits
 from django.http import JsonResponse
 from django.views import View
 from .models import User, TelegramAsset

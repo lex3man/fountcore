@@ -1,8 +1,14 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - fountcore_net
   rabbitmq:
-    image: rabbitmq:managment
+    image: rabbitmq:management
     ports:
       - 15672:15672
       - 5672:5672
@@ -24,6 +30,8 @@ services:
       - fountcore_net
   db:
     image: postgres:13.0-alpine
+    # ports:
+      # - 543:543
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:

@@ -15,7 +15,7 @@ class TelegramAsset(models.Model):
     lname = models.CharField(verbose_name="Фамилия", max_length=150, null=True)
     on_fox = models.BooleanField(verbose_name="Слушает", default=True)
     from_bot = models.ForeignKey(Bot, verbose_name="Через бота", on_delete=models.SET_NULL, null=True)
-    state_name = models.CharField(verbose_name="Стадия", max_length=50, null=True, blank=True)
+    state_id = models.CharField(verbose_name="Стадия", max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f'{self.tid} ({self.fname})'

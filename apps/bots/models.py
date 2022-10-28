@@ -7,6 +7,11 @@ bots_status = redis.Redis(db=5, host='redis')
 bot_processes = redis.Redis(db=4, host='redis')
 controller_script = '/app/bot_handler/start.py'
 
+STATE_MODES = [
+    ('wfb', 'Ожидание нажатия кнопки'),
+    ('inp', 'Ожидание ввода'),
+]
+
 BOT_TYPES = [
     ('TG', 'Telegram bot'),
 ]
@@ -96,7 +101,9 @@ class Log(models.Model):
         return f'{self.event_type} {self.bot}'
     
 class State(models.Model):
+    sid = models.CharField(verbose_name="ID", max_length=11, unique=True)
     caption = models.CharField(verbose_name="Наименование", max_length=150, unique=True)
+    mode = models.CharField(verbose_name="Режим", max_length=10, choices=STATE_MODES, default='wfb')
 
     def __str__(self):
         return self.caption
