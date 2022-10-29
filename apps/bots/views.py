@@ -64,15 +64,28 @@ class FindAnswer(View):
         tuid = request.GET.get('tid')
         text = request.GET.get('text')
         try:
+            requestBot = Bot.objects.get(bot_id = bid)
             tuser = TelegramAsset.objects.get(tid = tuid)
             userCurrentState = State.objects.get(sid = tuser.state_id)
-            requestBot = Bot.objects.get(bot_id = bid)
-            contentBlock = ContentBlock.objects.filter(bot = requestBot).filter(state = userCurrentState).get(content = text)
+            if userCurrentState.mode == 'wfb':
+                btn = Button.objects.get(caption = text)
+                contentBlock = ContentBlock.objects.filter(bot = requestBot).filter(prev_state = userCurrentState).get(from_button = btn)
+            else: contentBlock = ContentBlock.objects.filter(bot = requestBot).get(state = userCurrentState).next_block
+            tuser.state_id = contentBlock.next_state.sid
+            tuser.save()
+            kb = {}
+            if contentBlock.keyboard != None:
+                keyb = contentBlock.keyboard
+                kb.update({
+                    'caption':keyb.caption,
+                    'type':keyb.kb_type,
+                    })
             data = {
                 'status':'OK',
                 'content':{
                     'caption':contentBlock.caption,
                     'text':contentBlock.content,
+                    'keyboard':kb,
                 }
             }
         except: data = {"status":"error", "msg":"some of objects not found"}

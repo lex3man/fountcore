@@ -29,8 +29,8 @@ class KeyboardAdmin(admin.ModelAdmin):
 
 @admin.register(ContentBlock)
 class CBAdmin(admin.ModelAdmin):
-    list_display = ('caption', 'content', 'state', 'keyboard')
-    list_filter = ('lang', 'state')
+    list_display = ('caption', 'content', 'keyboard')
+    list_filter = ('lang',)
     search_fields = ('caption', 'content')
 
 @admin.register(Command)

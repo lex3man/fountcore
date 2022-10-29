@@ -1,7 +1,7 @@
 import requests, aiohttp, os
 
 server_host = os.environ.get("CORE_HOST")
-if server_host == '127.0.0.1' or server_host == 'localhost': server_url = f'http://{server_host}/'
+if os.environ.get("SSL") == 'False': server_url = f'http://{server_host}:{os.environ.get("PORT")}/'
 else: server_url = f'https://{server_host}/'
 
 async def GetContent(bot_id: str, request_text: str):
