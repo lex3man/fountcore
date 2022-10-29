@@ -48,7 +48,7 @@ class Button(models.Model):
 class Keyboard(models.Model):
     caption = models.CharField(verbose_name="Наименование", max_length=150, unique=True)
     lang = models.CharField(verbose_name="Язык", max_length=10, default="RUS", choices = LANGUEGES)
-    kb_type = models.CharField(verbose_name="Тип клавиатуры", max_length=10)
+    kb_type = models.CharField(verbose_name="Тип клавиатуры", max_length=10, choices = KEYBOARD_TYPES)
     buttons = models.ManyToManyField(Button, verbose_name="Кнопки клавиатуры")
 
     class Meta:
@@ -66,9 +66,12 @@ class Bot(models.Model):
     token = models.CharField(verbose_name="Токен", max_length=150)
     description = models.TextField(verbose_name="Описание", null=True)
 
-    class Meta:
-        verbose_name = 'Бот'
-        verbose_name_plural = 'Боты'
+    def __str__(self):
+        return self.caption
+
+    # class Meta:
+        # verbose_name = 'Бот'
+        # verbose_name_plural = 'Боты'
 
     @admin.action(description = 'Запустить выбранных ботов')
     def Start(self, _, queryset):
@@ -83,9 +86,11 @@ class Bot(models.Model):
     def Stop(self, _, queryset):
         for bot in queryset:
             if bot.active == True:
-                process = bot_processes.get(bot.caption)
-                os.kill(int(process), signal.SIGKILL)
-                bot_processes.mset({bot.caption:'None'})
+                try:
+                    process = bot_processes.get(bot.caption)
+                    os.kill(int(process), signal.SIGKILL)
+                    bot_processes.mset({bot.caption:'None'})
+                except: pass
                 bot.active = False
                 bot.save()
                 log = Log(bot = bot, event_type = 'stop', details = '')

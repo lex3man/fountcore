@@ -63,14 +63,17 @@ class FindAnswer(View):
         bid = request.GET.get('bid')
         tuid = request.GET.get('tid')
         text = request.GET.get('text')
-        tuser = TelegramAsset.objects.get(tid = tuid)
-        userCurrentState = State.objects.get(sid = tuser.state_id)
-        requestBot = Bot.objects.get(bot_id = bid)
-        contentBlock = ContentBlock.objects.filter(bot = requestBot).filter(state = userCurrentState).get(content = text)
-        return JsonResponse({
-            'status':'OK',
-            'content':{
-                'caption':contentBlock.caption,
-                'text':contentBlock.content,
+        try:
+            tuser = TelegramAsset.objects.get(tid = tuid)
+            userCurrentState = State.objects.get(sid = tuser.state_id)
+            requestBot = Bot.objects.get(bot_id = bid)
+            contentBlock = ContentBlock.objects.filter(bot = requestBot).filter(state = userCurrentState).get(content = text)
+            data = {
+                'status':'OK',
+                'content':{
+                    'caption':contentBlock.caption,
+                    'text':contentBlock.content,
+                }
             }
-        })
+        except: data = {"status":"error", "msg":"some of objects not found"}
+        return JsonResponse(data)

@@ -1,7 +1,8 @@
-import requests, aiohttp
+import requests, aiohttp, os
 
-server_host = 'core.fountcore.pro'
-server_url = f'https://{server_host}/'
+server_host = os.environ.get("CORE_HOST")
+if server_host == '127.0.0.1' or server_host == 'localhost': server_url = f'http://{server_host}/'
+else: server_url = f'https://{server_host}/'
 
 async def GetContent(bot_id: str, request_text: str):
     url = server_url + 'bots/content/'
