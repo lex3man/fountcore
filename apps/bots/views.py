@@ -1,7 +1,7 @@
 import json
 
 from apps.users.models import TelegramAsset
-from .models import Bot, Button, Keyboard, ContentBlock, State, Log, Command
+from .models import Bot, Button, ContentBlock, State, Log, Command, Keyboard
 from django.http import JsonResponse
 from django.views import View
 
@@ -90,3 +90,16 @@ class FindAnswer(View):
             }
         except: data = {"status":"error", "msg":"some of objects not found"}
         return JsonResponse(data)
+
+class GetKeyboard(View):
+    def get(self, request):
+        btn_data = {}
+        if request.GET.get('kb'):
+            try: keyb = Keyboard.objects.get(caption = request.GET.get('kb'))
+            except Keyboard.DoesNotExist: return JsonResponse({'status':'error', 'msg':'no such keyboard'})
+            for btn in keyb.buttons.all():
+                btn_data.update({btn.caption:{'cb':btn.callback,'row':btn.row}})
+        return JsonResponse(btn_data)
+
+
+

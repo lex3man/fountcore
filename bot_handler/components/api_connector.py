@@ -36,3 +36,11 @@ def GetCommandsList(bot_id: str):
     data = {'bid':bot_id}
     response = requests.get(url, params=data)
     return response.json()
+
+async def GetKeybordConfig(keyboardName: str):
+    url = server_url + 'bots/keyb/'
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params={'kb':keyboardName}) as resp:
+            response = await resp.json()
+            return response
+

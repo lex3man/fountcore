@@ -2,6 +2,7 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher.filters import Text
 from aiogram.types import ReplyKeyboardRemove
 from components.api_connector import UserAdd, GetCommandsList
+from components.utils import MakeStdKeyboard
 
 async def CommandStart(message: types.Message):
     await UserAdd(
@@ -11,11 +12,13 @@ async def CommandStart(message: types.Message):
         message.from_user.first_name,
         message.from_user.last_name
     )
+    keyboard = ReplyKeyboardRemove()
     try:
         start_cmd = GetCommandsList(str(message.bot.id))['start']
         answer_text = start_cmd['text']
+        if start_cmd['keyboard'] != 'None': keyboard = await MakeStdKeyboard(start_cmd['keyboard'])
     except: answer_text = "Для бота не создана команда start"
-    await message.answer(answer_text, reply_markup = ReplyKeyboardRemove())
+    await message.answer(answer_text, reply_markup = keyboard)
 
 async def CommandReact(message: types.Message):
     await message.answer("Привет!", reply_markup = ReplyKeyboardRemove())
