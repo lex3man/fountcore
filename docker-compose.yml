@@ -16,9 +16,11 @@ services:
       - fountcore_net
   core_orm:
     build: .
-    command: python manage.py runserver 0.0.0.0:8001
+    restart: always
+    command: uvicorn config.asgi:application --reload --host 0.0.0.0 --port 8001
     volumes:
-      - .:/app
+    - .:/app
+    - static_volume:/app/static
     ports:
       - 8001:8001
     env_file:
@@ -43,6 +45,7 @@ services:
 
 volumes:
   postgres_data:
+  static_volume:
 
 networks:
   fountcore_net:

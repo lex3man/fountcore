@@ -15,19 +15,25 @@ async def CommandStart(message: types.Message):
     keyboard = ReplyKeyboardRemove()
     try:
         start_cmd = GetCommandsList(str(message.bot.id))['start']
-        answer_text = start_cmd['text']
+        answerText = start_cmd['text']
         if start_cmd['keyboard'] != 'None': keyboard = await MakeStdKeyboard(start_cmd['keyboard'])
-    except: answer_text = "Для бота не создана команда start"
-    await message.answer(answer_text, reply_markup = keyboard)
+    except: answerText = "Для бота не создана команда start"
+    await message.answer(answerText, reply_markup = keyboard)
 
 async def CommandReact(message: types.Message):
-    await message.answer("Привет!", reply_markup = ReplyKeyboardRemove())
+    keyboard = ReplyKeyboardRemove()
+    cmd = GetCommandsList(str(message.bot.id)).get(message.text.replace('/',''), {})
+    answerText = cmd.get('text', 'Не на всё подряд я отвечаю')
+    if cmd['keyboard'] != 'None': keyboard = await MakeStdKeyboard((cmd['keyboard']))
+    await message.answer(answerText, reply_markup = keyboard) 
 
 async def CommandBotID(message: types.Message):
-    await message.answer(str(message.bot.id), reply_markup = ReplyKeyboardRemove())
+    keyboard = ReplyKeyboardRemove()
+    await message.answer(str(message.bot.id), reply_markup = keyboard)
 
 async def MessageReact(message: types.Message):
-    await message.answer(message.text, reply_markup = ReplyKeyboardRemove())
+    keyboard = ReplyKeyboardRemove()
+    await message.answer(message.text, reply_markup = keyboard)
 
 def register_message_handlers(dp:Dispatcher, bot_id: str):
     bot_commands = GetCommandsList(bot_id).keys()
