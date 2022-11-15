@@ -1,12 +1,14 @@
 version: '3.8'
 
 services:
+
   redis:
     image: redis
     ports:
       - 6379:6379
     networks:
       - fountcore_net
+
   rabbitmq:
     image: rabbitmq:management
     ports:
@@ -14,6 +16,7 @@ services:
       - 5672:5672
     networks:
       - fountcore_net
+
   core_orm:
     build: .
     restart: always
@@ -30,6 +33,7 @@ services:
       - rabbitmq
     networks:
       - fountcore_net
+
   db:
     image: postgres:13.0-alpine
     # ports:

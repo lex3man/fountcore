@@ -100,6 +100,3 @@ class GetKeyboard(View):
             for btn in keyb.buttons.all():
                 btn_data.update({btn.caption:{'cb':btn.callback,'row':btn.row}})
         return JsonResponse(btn_data)
-
-
-
